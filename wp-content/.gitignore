@@ -1,0 +1,62 @@
+# Ignore everything in wp-content
+
+
+# But track these directories
+/wp-content/themes/
+/wp-content/mu-plugins/
+
+# Ignore everything in plugins
+
+# But track your custom plugin(s)
+/wp-content/plugins/your-custom-plugin-name/
+
+# Ignore everything in themes except your custom theme
+/wp-content/themes/*
+!/wp-content/themes/your-custom-theme/
+
+# WordPress core files
+/wp-admin/
+/wp-includes/
+/index.php
+/wp-*.php
+/xmlrpc.php
+/readme.html
+/license.txt
+
+# WordPress config
+wp-config.php
+.htaccess
+
+# Uploads and cache
+/wp-content/uploads/
+/wp-content/cache/
+/wp-content/upgrade/
+/wp-content/backup*/
+
+# Dependencies
+/vendor/
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+error_log
+debug.log
+
+# Build files (if applicable)
+*.map
+/dist/
+/build/
