@@ -1,26 +1,27 @@
 <?php
-namespace Perrystown\App\Bookings;
+namespace Perrystown\App\Faq;
 
 if (!defined('ABSPATH')) exit;
 
-class Booking_Table {
+class Faq_Table {
 
-    // ✅ Create booking table
+    // ✅ Create FAQ table
     public static function create_table() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-        $table_name = $wpdb->prefix . 'bookings';
+        $table_name = $wpdb->prefix . 'faq';
 
         $sql = "CREATE TABLE {$table_name} (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            name varchar(100) NOT NULL,
-            email varchar(100) NOT NULL,
-            phone varchar(20) DEFAULT NULL,
-            status varchar(50) DEFAULT 'pending',
+            question varchar(255) NOT NULL,
+            answer text NOT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            PRIMARY KEY (id)
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+            PRIMARY KEY  (id),
+            KEY question_idx (question(100)),
+            FULLTEXT KEY search_idx (question, answer)
         ) $charset_collate;";
 
         dbDelta($sql);
@@ -31,8 +32,7 @@ class Booking_Table {
         global $wpdb;
 
         $tables = [
-            "{$wpdb->prefix}bookings"
-            // add more tables here if needed later
+            "{$wpdb->prefix}faq"
         ];
 
         foreach ($tables as $table) {
