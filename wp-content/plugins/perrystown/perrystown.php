@@ -61,9 +61,18 @@ require_once PERRYSTOWN_PLUGIN_PATH . 'app/faq/faq.controller.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/faq/faq.routes.php';
 
 // ✅ Initialize Routes (remove duplicate registration)
-add_action('rest_api_init', function() {
-    new \Perrystown\App\Bookings\Booking_Routes();
-    new \Perrystown\App\Faq\Faq_Routes();
+// add_action('rest_api_init', function() {
+//     new \Perrystown\App\Bookings\Booking_Routes();
+//     new \Perrystown\App\Faq\Faq_Routes();
+// });
+
+// ✅ Initialize routes
+add_action('init', function() {
+    $booking_routes = new \Perrystown\App\Bookings\Booking_Routes();
+    $booking_routes->register_routes();
+
+    $faq_routes = new \Perrystown\App\Faq\Faq_Routes();
+    $faq_routes->register_routes();
 });
 
 // ✅ On plugin activation, create all required tables

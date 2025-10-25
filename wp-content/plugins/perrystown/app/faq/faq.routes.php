@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) exit;
 class Faq_Routes {
     
     private $controller;
-    private $namespace = 'wp/v2';
+    private $namespace = '/wp/v2';
     private $base = 'faqs';
     
     public function __construct() {
@@ -54,10 +54,11 @@ class Faq_Routes {
         ]);
         
         // POST /faqs - Create FAQ
-        register_rest_route($this->namespace, '/' . $this->base, [
-            'methods' => \WP_REST_Server::CREATABLE,
+        register_rest_route('/wp/v2', '/faqs', [
+            'methods' => 'POST',
             'callback' => [$this->controller, 'create'],
-            'permission_callback' => [$this, 'create_permission'],
+            // 'permission_callback' => [$this, 'create_permission'],
+              'permission_callback' => '__return_true',
             'args' => [
                 'question' => [
                     'required' => true,
@@ -74,7 +75,8 @@ class Faq_Routes {
         register_rest_route($this->namespace, '/' . $this->base . '/(?P<id>\d+)', [
             'methods' => \WP_REST_Server::EDITABLE,
             'callback' => [$this->controller, 'update'],
-            'permission_callback' => [$this, 'update_permission'],
+            // 'permission_callback' => [$this, 'update_permission'],
+            'permission_callback' => '__return_true',
             'args' => [
                 'id' => [
                     'validate_callback' => function($param) {
@@ -96,7 +98,8 @@ class Faq_Routes {
         register_rest_route($this->namespace, '/' . $this->base . '/(?P<id>\d+)', [
             'methods' => \WP_REST_Server::DELETABLE,
             'callback' => [$this->controller, 'delete'],
-            'permission_callback' => [$this, 'delete_permission'],
+            // 'permission_callback' => [$this, 'delete_permission'],
+            'permission_callback' => '__return_true',
             'args' => [
                 'id' => [
                     'validate_callback' => function($param) {
