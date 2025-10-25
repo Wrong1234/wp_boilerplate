@@ -98,8 +98,7 @@ class Faq_Routes {
         register_rest_route($this->namespace, '/' . $this->base . '/(?P<id>\d+)', [
             'methods' => \WP_REST_Server::DELETABLE,
             'callback' => [$this->controller, 'delete'],
-            // 'permission_callback' => [$this, 'delete_permission'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [$this, 'delete_permission'],
             'args' => [
                 'id' => [
                     'validate_callback' => function($param) {
