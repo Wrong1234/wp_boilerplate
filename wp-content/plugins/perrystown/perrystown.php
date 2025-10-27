@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Perrystown
  * Description: Perrystown plugin (bookings & FAQ modules)
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Rafiul Hossain
  * Author URI: https://yourwebsite.com/
  * License: GPL2
@@ -19,14 +19,14 @@ add_action('phpmailer_init', function($phpmailer) {
         error_log('PHPMailer Init Hook Triggered');
         
         $phpmailer->isSMTP();
-        $phpmailer->Host = PERRYSTOWN_SMTP_HOST;
-        $phpmailer->SMTPAuth = true;
-        $phpmailer->Port = PERRYSTOWN_SMTP_PORT ?? 587;
-        $phpmailer->Username = PERRYSTOWN_SMTP_USER;
-        $phpmailer->Password = PERRYSTOWN_SMTP_PASS;
+        $phpmailer->Host       = PERRYSTOWN_SMTP_HOST;
+        $phpmailer->SMTPAuth   = true;
+        $phpmailer->Port       = PERRYSTOWN_SMTP_PORT ?? 587;
+        $phpmailer->Username   = PERRYSTOWN_SMTP_USER;
+        $phpmailer->Password   = PERRYSTOWN_SMTP_PASS;
         $phpmailer->SMTPSecure = PERRYSTOWN_SMTP_SECURE ?? 'tls';
-        $phpmailer->From = PERRYSTOWN_SMTP_FROM ?? PERRYSTOWN_SMTP_USER;
-        $phpmailer->FromName = PERRYSTOWN_SMTP_FROM_NAME ?? 'Perrystown';
+        $phpmailer->From       = PERRYSTOWN_SMTP_FROM ?? PERRYSTOWN_SMTP_USER;
+        $phpmailer->FromName   = PERRYSTOWN_SMTP_FROM_NAME ?? 'Perrystown';
         
         // Enable debug in development only
         if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -43,9 +43,11 @@ add_action('phpmailer_init', function($phpmailer) {
 // ✅ Define plugin constants
 define('PERRYSTOWN_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('PERRYSTOWN_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('PERRYSTOWN_VERSION', '1.0.0');
+define('PERRYSTOWN_VERSION', '1.0.1');
 
-// ✅ Include all booking-related files
+// ======================
+// Bookings Module
+// ======================
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/bookings/booking.migration.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/bookings/booking.model.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/bookings/booking.validator.php';
@@ -53,42 +55,46 @@ require_once PERRYSTOWN_PLUGIN_PATH . 'app/bookings/booking.controller.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/bookings/booking.routes.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/bookings/includes/BookingConfig.php';
 
-// ✅ Include all FAQ-related files
+// ======================
+// FAQ Module
+// ======================
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/faq/faq.migration.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/faq/faq.model.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/faq/faq.validator.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/faq/faq.controller.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/faq/faq.routes.php';
 
-// ✅ Initialize Routes (remove duplicate registration)
+// ✅ Initialize Routes (keep as in your current pattern)
 add_action('rest_api_init', function() {
     new \Perrystown\App\Bookings\Booking_Routes();
     new \Perrystown\App\Faq\Faq_Routes();
 });
 
-// ✅ On plugin activation, create all required tables
+// ✅ On plugin activation, create required tables
 register_activation_hook(__FILE__, function () {
     \Perrystown\App\Bookings\Booking_Table::create_table();
-    \Perrystown\App\Faq\Faq_Table::create_table(); // ✅ FIXED namespace
-    
+    \Perrystown\App\Faq\Faq_Table::create_table(); // ✅ namespace fixed
+
     // Set plugin version
     update_option('perrystown_version', PERRYSTOWN_VERSION);
-    
+
     // Flush rewrite rules
     flush_rewrite_rules();
 });
 
-// ✅ Drop all tables when plugin deactivated
+// ✅ On plugin deactivation: keep data (no drops)
 register_deactivation_hook(__FILE__, function () {
-    \Perrystown\App\Bookings\Booking_Table::drop_table();
+    // Intentionally no table drops to preserve data
+});
 
-//jwt time validation
+// ======================
+// Auth / JWT
+// ======================
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/auth/jwt_hooks.php';
 
-
-
-// CONTACT MODULE 
- 
+// ======================
+// Contact Module
+// ======================
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/contacts/contact_table.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/contacts/contact_controller.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/contacts/contact_routes.php';
@@ -97,13 +103,14 @@ register_activation_hook(__FILE__, function () {
     \Perrystown\App\Contact\Contact_Table::create_table();
 });
 
+// If you ever decide to drop on deactivate, add a hook—but current policy is to keep data.
 // register_deactivation_hook(__FILE__, function () {
 //     \Perrystown\App\Contact\Contact_Table::drop_table();
 // });
 
-
-
-// SERVICE MODULE
+// ======================
+// Service Module
+// ======================
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/services/service_table.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/services/service_controller.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/services/service_routes.php';
@@ -112,10 +119,9 @@ register_activation_hook(__FILE__, function () {
     \Perrystown\App\Service\Service_Table::create_table();
 });
 
-
-//gallery module
-
-// perrystown.php
+// ======================
+// Gallery Module
+// ======================
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_table.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_controller.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_routes.php';
@@ -124,15 +130,13 @@ register_activation_hook(__FILE__, function () {
     \Perrystown\App\Gallery\Gallery_Table::create_table();
 });
 
-
-// === REFERRALS MODULE ===
+// ======================
+// Referrals Module
+// ======================
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_table.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_controller.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_routes.php';
 
-// Create table on plugin activation
 register_activation_hook(__FILE__, function () {
     \Perrystown\App\Referral\Referral_Table::create_table();
 });
-
-
