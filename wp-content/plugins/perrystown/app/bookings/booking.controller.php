@@ -104,12 +104,27 @@ class Booking_Controller {
     public function get_all(\WP_REST_Request $request) {
         $page = max(1, (int) $request->get_param('page') ?: 1);
         $per_page = max(1, min(100, (int) $request->get_param('per_page') ?: 10));
+        
+        // Filter parameters
         $status = $request->get_param('status');
+        $preferred_date = $request->get_param('preferred_date');
+        
+        // Search parameter
+        $search = $request->get_param('search');
 
         $offset = ($page - 1) * $per_page;
 
-        $bookings = $this->model->get_all($per_page, $offset, $status);
-        $total = $this->model->count($status);
+        // Prepare filters array
+        $filters = [];
+        if ($status) {
+            $filters['status'] = $status;
+        }
+        if ($preferred_date) {
+            $filters['preferred_date'] = $preferred_date;
+        }
+
+        $bookings = $this->model->get_all($per_page, $offset, $filters, $search);
+        $total = $this->model->count($filters, $search);
 
         return $this->success_response([
             'bookings' => $bookings,
@@ -120,9 +135,6 @@ class Booking_Controller {
                 'total_pages' => ceil($total / $per_page)
             ]
         ]);
-        // return $this->success_response([
-        //     'message' => "Your route are correct"
-        // ]);
     }
 
     /**

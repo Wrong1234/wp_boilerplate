@@ -15,12 +15,6 @@ class Booking_Routes {
 
     public function __construct() {
         $this->booking_controller = new Booking_Controller();
-    }
-
-    /**
-     * Register all routes
-     */
-    public function register_routes() {
         add_action('rest_api_init', [$this, 'register_booking_routes']);
     }
 
@@ -28,6 +22,7 @@ class Booking_Routes {
      * Register booking routes
      */
     public function register_booking_routes() {
+        //  error_log('🚀 Booking_Routes::mahabur your are great topha kobul koro ');
         
         // Create booking
         register_rest_route('/wp/v2', '/bookings', [
