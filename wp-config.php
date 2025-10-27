@@ -87,8 +87,10 @@ $table_prefix = 'wp_';
  *
  * @link https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/
  */
-define( 'WP_DEBUG', false );
-
+define( 'WP_DEBUG', true );
+define( 'WP_DEBUG_LOG', true );
+define( 'WP_DEBUG_DISPLAY', false );
+@ini_set( 'display_errors', 0 );
 /* Add any custom values between this line and the "stop editing" line. */
 
 
@@ -102,3 +104,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'wp-settings.php';
+
+
+// ✅ SMTP Configuration (Add to wp-config.php - NEVER commit to git)
+define('PERRYSTOWN_SMTP_HOST', 'smtp.gmail.com');
+define('PERRYSTOWN_SMTP_PORT', 587);
+define('PERRYSTOWN_SMTP_USER', 'mahabur1814031@gmail.com');
+define('PERRYSTOWN_SMTP_PASS', 'cccfwvyagrsozfpw'); // Use app-specific password
+define('PERRYSTOWN_SMTP_SECURE', 'tls');
+define('PERRYSTOWN_SMTP_FROM', 'mahabur1814031@gmail.com');
+define('PERRYSTOWN_SMTP_FROM_NAME', 'Perrystown Booking');
