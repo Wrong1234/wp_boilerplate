@@ -1,4 +1,7 @@
 <?php
+// ============================================
+// 1. SERVICE TABLE (service_table.php)
+// ============================================
 
 namespace Perrystown\App\Service;
 
@@ -22,6 +25,7 @@ class Service_Table
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             name VARCHAR(191) NOT NULL,
             title VARCHAR(191) NULL,
+            rate VARCHAR(50)NOT NULL,
             description LONGTEXT NULL,
             image VARCHAR(255) NOT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

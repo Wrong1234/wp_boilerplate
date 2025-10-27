@@ -1,4 +1,5 @@
 <?php
+
 namespace Perrystown\App\Service\Validation;
 
 if (!defined('ABSPATH')) exit;
@@ -9,7 +10,7 @@ class Validator {
             $errors = self::check($schema_key, $request);
             if (!empty($errors)) {
                 return new \WP_REST_Response([
-                    'success' => false,
+                    'status' => false,
                     'message' => 'Validation failed.',
                     'errors'  => $errors,
                 ], 422);
@@ -25,12 +26,12 @@ class Validator {
                 'per_page' => ['type'=>'int?','sanitize'=>'int'],
                 'search'   => ['type'=>'string?','sanitize'=>'text'],
             ],
-            // name required; image required as file OR url (meta rule below)
             'store' => [
                 'name'        => ['type'=>'string','required'=>true,'sanitize'=>'text','rule'=>'nonempty'],
                 'title'       => ['type'=>'string?','sanitize'=>'text'],
+                'rate'        => ['type'=>'string?','sanitize'=>'text'],
                 'description' => ['type'=>'string?','sanitize'=>'html'],
-                'image'       => ['type'=>'string?','sanitize'=>'text'], // URL allowed
+                'image'       => ['type'=>'string?','sanitize'=>'text'],
                 '_require_image_file_or_url' => ['type'=>'meta','rule'=>'image_required'],
             ],
             'show' => [
@@ -40,9 +41,10 @@ class Validator {
                 'id'          => ['type'=>'int','required'=>true,'from'=>'param','sanitize'=>'int','rule'=>'positive'],
                 'name'        => ['type'=>'string?','sanitize'=>'text'],
                 'title'       => ['type'=>'string?','sanitize'=>'text'],
+                'rate'        => ['type'=>'string?','sanitize'=>'text'],
                 'description' => ['type'=>'string?','sanitize'=>'html'],
                 'image'       => ['type'=>'string?','sanitize'=>'text'],
-                '_atleast_one'=> ['type'=>'meta','rule'=>'at_least_one_of:name,title,description,image'],
+                '_atleast_one'=> ['type'=>'meta','rule'=>'at_least_one_of:name,title,rate,description,image'],
             ],
             'destroy' => [
                 'id' => ['type'=>'int','required'=>true,'from'=>'param','sanitize'=>'int','rule'=>'positive'],
@@ -69,8 +71,20 @@ class Validator {
         if (isset($schema['_atleast_one'])) {
             $fields  = explode(',', substr($schema['_atleast_one']['rule'], strlen('at_least_one_of:')));
             $present = false;
-            foreach ($fields as $f) { $v = $req->get_param($f); if ($v !== null && $v !== '') { $present = true; break; } }
-            if (!$present) { $errors['fields'][] = 'at_least_one_field_required'; }
+            foreach ($fields as $f) { 
+                $v = $req->get_param($f); 
+                if ($v !== null && $v !== '') { 
+                    $present = true; 
+                    break; 
+                } 
+            }
+            if (!$present) { 
+                $files = $req->get_file_params();
+                if (!empty($files['image']) && !empty($files['image']['tmp_name'])) $present = true;
+            }
+            if (!$present) { 
+                $errors['fields'][] = 'at_least_one_field_required'; 
+            }
             unset($schema['_atleast_one']);
         }
 
@@ -96,18 +110,30 @@ class Validator {
                 $errors[$field][] = 'required'; continue;
             }
 
-            $val = self::sanitize($conf['sanitize'] ?? null, $raw);
+            if ($raw !== null && $raw !== '') {
+                $val = self::sanitize($conf['sanitize'] ?? null, $raw);
 
-            $type = $conf['type'] ?? null;
-            if ($type === 'int' && !is_numeric($val)) { $errors[$field][] = 'must_be_int'; }
-            if ($type === 'int?' && !is_null($val) && !is_numeric($val)) { $errors[$field][] = 'must_be_int_or_null'; }
-            if ($type === 'string' && !is_string($val)) { $errors[$field][] = 'must_be_string'; }
+                $type = $conf['type'] ?? null;
+                if ($type === 'int' && !is_numeric($val)) { 
+                    $errors[$field][] = 'must_be_int'; 
+                }
+                if ($type === 'int?' && !is_null($val) && !is_numeric($val)) { 
+                    $errors[$field][] = 'must_be_int_or_null'; 
+                }
+                if ($type === 'string' && !is_string($val)) { 
+                    $errors[$field][] = 'must_be_string'; 
+                }
 
-            $rule = $conf['rule'] ?? null;
-            if ($rule === 'nonempty' && is_string($val) && trim($val) === '') { $errors[$field][] = 'cannot_be_empty'; }
-            if ($rule === 'positive' && (!is_numeric($val) || intval($val) <= 0)) { $errors[$field][] = 'must_be_positive'; }
+                $rule = $conf['rule'] ?? null;
+                if ($rule === 'nonempty' && is_string($val) && trim($val) === '') { 
+                    $errors[$field][] = 'cannot_be_empty'; 
+                }
+                if ($rule === 'positive' && (!is_numeric($val) || intval($val) <= 0)) { 
+                    $errors[$field][] = 'must_be_positive'; 
+                }
 
-            $req->set_param($field, $val);
+                $req->set_param($field, $val);
+            }
         }
 
         return $errors;

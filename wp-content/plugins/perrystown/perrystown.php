@@ -13,10 +13,7 @@
 if (!defined('ABSPATH')) exit; // Prevent direct access
 
 
-// ======================
-// Auth / JWT
-// ======================
-require_once PERRYSTOWN_PLUGIN_PATH . 'app/auth/jwt_hooks.php';
+
 
 define('PERRYSTOWN_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('PERRYSTOWN_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -25,6 +22,11 @@ define('PERRYSTOWN_MAIN_FILE', __FILE__); // Pass main file reference
 
 // ✅ SMTP Configuration - Use constants from wp-config.php
 require_once PERRYSTOWN_PLUGIN_PATH . 'helper/mail.php';
+
+// ======================
+// Auth / JWT
+// ======================
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/auth/jwt_hooks.php';
 
 
 // ✅ Load files

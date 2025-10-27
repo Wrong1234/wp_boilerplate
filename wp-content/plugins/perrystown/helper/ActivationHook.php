@@ -18,3 +18,4 @@ register_activation_hook(PERRYSTOWN_MAIN_FILE, function () {
 register_deactivation_hook(PERRYSTOWN_MAIN_FILE, function () {
     flush_rewrite_rules();
 });
+
