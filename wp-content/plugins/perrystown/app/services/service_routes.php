@@ -39,18 +39,22 @@ function perrystown_register_service_routes()
         'permission_callback' => '__return_true',
     ]);
 
-    // Update (partial)
+    // Update 
     register_rest_route($ns, '/services/(?P<id>\d+)', [
         'methods'             => ['PUT', 'PATCH', 'POST'],
         'callback'            => Validator::wrap([Service_Controller::class, 'update'], 'update'),
-        'permission_callback' => '__return_true',
+        'permission_callback' => function (\WP_REST_Request $request) {
+            return is_user_logged_in();
+        },
     ]);
 
     // Delete
     register_rest_route($ns, '/services/(?P<id>\d+)', [
         'methods'             => \WP_REST_Server::DELETABLE,
         'callback'            => Validator::wrap([Service_Controller::class, 'destroy'], 'destroy'),
-        'permission_callback' => '__return_true',
+        'permission_callback' => function (\WP_REST_Request $request) {
+            return is_user_logged_in();
+        },
     ]);
 }
 

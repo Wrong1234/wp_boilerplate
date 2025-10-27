@@ -43,9 +43,9 @@ require_once PERRYSTOWN_PLUGIN_PATH . 'app/contacts/contact_table.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/contacts/contact_controller.php';
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/contacts/contact_routes.php';
 
-// register_activation_hook(__FILE__, function () {
-//     \Perrystown\App\Contact\Contact_Table::create_table();
-// });
+register_activation_hook(__FILE__, function () {
+    \Perrystown\App\Contact\Contact_Table::create_table();
+});
 
 // register_deactivation_hook(__FILE__, function () {
 //     \Perrystown\App\Contact\Contact_Table::drop_table();
@@ -61,8 +61,28 @@ require_once PERRYSTOWN_PLUGIN_PATH . 'app/services/service_routes.php';
 register_activation_hook(__FILE__, function () {
     \Perrystown\App\Service\Service_Table::create_table();
 });
-// register_deactivation_hook(...) // if present
 
-//  NOT drop tables on deactivate.
-// register_deactivation_hook(__FILE__, function () { /* keep service table */ });
-// When a new JWT is about to be returned, mark all older tokens invalid.
+
+//gallery module
+
+// perrystown.php
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_table.php';
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_controller.php';
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_routes.php';
+
+register_activation_hook(__FILE__, function () {
+    \Perrystown\App\Gallery\Gallery_Table::create_table();
+});
+
+
+// === REFERRALS MODULE ===
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_table.php';
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_controller.php';
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_routes.php';
+
+// Create table on plugin activation
+register_activation_hook(__FILE__, function () {
+    \Perrystown\App\Referral\Referral_Table::create_table();
+});
+
+

@@ -1,6 +1,6 @@
 <?php
 /**
- * Contact Routes (clean: no validation here)
+ * Contact Routes 
  */
 use Perrystown\App\Contact\Contact_Controller;
 use Perrystown\App\Contact\Validation\Validator;

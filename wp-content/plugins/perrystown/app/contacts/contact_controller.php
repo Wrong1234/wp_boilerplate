@@ -88,7 +88,7 @@ class Contact_Controller {
         ], 201);
     }
 
-    // Show single (id from params)
+    // Show single 
     public static function show(\WP_REST_Request $request) {
         global $wpdb; $table = Contact_Table::table_name();
 
@@ -115,7 +115,7 @@ class Contact_Controller {
         ], 200);
     }
 
-    // Update (partial)
+    // Update 
     public static function update(\WP_REST_Request $request) {
         global $wpdb; $table = Contact_Table::table_name();
         $id = intval($request->get_param('id'));

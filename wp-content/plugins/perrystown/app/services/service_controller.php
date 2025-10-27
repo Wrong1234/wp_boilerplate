@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) exit;
 
 class Service_Controller {
 
-    // GET /services — list with pagination + multi-word LIKE search
+    // GET /services 
     public static function index(\WP_REST_Request $request) {
         global $wpdb; $table = Service_Table::table_name();
 
@@ -48,7 +48,7 @@ class Service_Controller {
         ], 200);
     }
 
-    // POST /services — create
+     //services — create
     public static function store(\WP_REST_Request $request) {
         global $wpdb; $table = Service_Table::table_name();
 
@@ -127,7 +127,7 @@ class Service_Controller {
         ], 200);
     }
 
-    // PUT/PATCH /services/{id} — partial update
+    // PUT/PATCH /services/{id}  update
     public static function update(\WP_REST_Request $request) {
     global $wpdb; 
     $table = Service_Table::table_name();
