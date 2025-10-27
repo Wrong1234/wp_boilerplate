@@ -65,22 +65,92 @@ class Booking_Model {
         );
     }
 
+/**
+ * Get all bookings with pagination, filters, and search
+ */
+public function get_all($limit = 10, $offset = 0, $filters = [], $search = null) {
+    global $wpdb;
+    
+    $where_clauses = [];
+    $where_values = [];
+    
+    // Apply filters
+    if (!empty($filters['status'])) {
+        $where_clauses[] = "status = %s";
+        $where_values[] = $filters['status'];
+    }
+    
+    if (!empty($filters['preferred_date'])) {
+        $where_clauses[] = "preferred_date = %s";
+        $where_values[] = $filters['preferred_date'];
+    }
+    
+    // Apply search across multiple fields
+    if (!empty($search)) {
+        $search_term = '%' . $wpdb->esc_like($search) . '%';
+        $where_clauses[] = "(name LIKE %s OR email LIKE %s OR phone LIKE %s OR subject LIKE %s OR preferred_time LIKE %s)";
+        $where_values = array_merge($where_values, [$search_term, $search_term, $search_term, $search_term, $search_term]);
+    }
+    
+    // Build WHERE clause
+    $where = '';
+    if (!empty($where_clauses)) {
+        $where = 'WHERE ' . implode(' AND ', $where_clauses);
+    }
+    
+    // Build query
+    $query = "SELECT * FROM {$this->table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d";
+    $where_values[] = $limit;
+    $where_values[] = $offset;
+    
+    // Prepare and execute query
+    if (!empty($where_values)) {
+        return $wpdb->get_results($wpdb->prepare($query, $where_values));
+    }
+    
+    return $wpdb->get_results($wpdb->prepare($query, $limit, $offset));
+}
+
     /**
-     * Get all bookings with pagination
+     * Count total bookings with filters and search
      */
-    public function get_all($limit = 10, $offset = 0, $status = null) {
+    public function count($filters = [], $search = null) {
         global $wpdb;
         
-        $where = '';
-        if ($status) {
-            $where = $wpdb->prepare("WHERE status = %s", $status);
-        }
-
-        $query = "SELECT * FROM {$this->table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d";
+        $where_clauses = [];
+        $where_values = [];
         
-        return $wpdb->get_results(
-            $wpdb->prepare($query, $limit, $offset)
-        );
+        // Apply filters
+        if (!empty($filters['status'])) {
+            $where_clauses[] = "status = %s";
+            $where_values[] = $filters['status'];
+        }
+        
+        if (!empty($filters['preferred_date'])) {
+            $where_clauses[] = "preferred_date = %s";
+            $where_values[] = $filters['preferred_date'];
+        }
+        
+        // Apply search
+        if (!empty($search)) {
+            $search_term = '%' . $wpdb->esc_like($search) . '%';
+            $where_clauses[] = "(name LIKE %s OR email LIKE %s OR phone LIKE %s OR subject LIKE %s OR preferred_time LIKE %s)";
+            $where_values = array_merge($where_values, [$search_term, $search_term, $search_term, $search_term, $search_term]);
+        }
+        
+        // Build WHERE clause
+        $where = '';
+        if (!empty($where_clauses)) {
+            $where = 'WHERE ' . implode(' AND ', $where_clauses);
+        }
+        
+        $query = "SELECT COUNT(*) FROM {$this->table_name} {$where}";
+        
+        if (!empty($where_values)) {
+            return (int) $wpdb->get_var($wpdb->prepare($query, $where_values));
+        }
+        
+        return (int) $wpdb->get_var($query);
     }
 
     /**
@@ -130,16 +200,16 @@ class Booking_Model {
     /**
      * Count total bookings
      */
-    public function count($status = null) {
-        global $wpdb;
+    // public function count($status = null) {
+    //     global $wpdb;
         
-        $where = '';
-        if ($status) {
-            $where = $wpdb->prepare("WHERE status = %s", $status);
-        }
+    //     $where = '';
+    //     if ($status) {
+    //         $where = $wpdb->prepare("WHERE status = %s", $status);
+    //     }
 
-        return (int) $wpdb->get_var("SELECT COUNT(*) FROM {$this->table_name} {$where}");
-    }
+    //     return (int) $wpdb->get_var("SELECT COUNT(*) FROM {$this->table_name} {$where}");
+    // }
 
     /**
      * Check if booking exists for date/time
