@@ -18,7 +18,7 @@ define('PERRYSTOWN_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PERRYSTOWN_VERSION', '1.0.0');
 define('PERRYSTOWN_MAIN_FILE', __FILE__); // Pass main file reference
 
-// ✅ SMTP Configuration - Use constants from wp-config.php for security
+// ✅ SMTP Configuration - Use constants from wp-config.php
 require_once PERRYSTOWN_PLUGIN_PATH . 'helper/mail.php';
 
 
