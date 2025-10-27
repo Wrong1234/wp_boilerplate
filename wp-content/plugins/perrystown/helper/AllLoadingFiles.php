@@ -33,3 +33,15 @@ require_once PERRYSTOWN_PLUGIN_PATH . 'app/services/service_routes.php';
 
 //jwt time validation
 require_once PERRYSTOWN_PLUGIN_PATH . 'app/auth/jwt_hooks.php';
+
+//gallary
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_table.php';
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_controller.php';
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/galleries/gallery_routes.php';
+
+// ======================
+// Referrals Module
+// ======================
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_table.php';
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_controller.php';
+require_once PERRYSTOWN_PLUGIN_PATH . 'app/referrals/referral_routes.php';
